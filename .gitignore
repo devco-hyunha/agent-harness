@@ -1,0 +1,6 @@
+*.bak
+__pycache__/
+.DS_Store
+
+# 로컬 작업 기록. 공개 대상이 아니다.
+docs/tasks/
