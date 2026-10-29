@@ -9,7 +9,7 @@
 | harness/ | 하네스 설계 기록(HARNESS.md). 정본입니다. |
 | skills/ | Agent Skills 표준 스킬 6개: plan-harness, build-harness, review-harness, delegation-brief, proofread-harness, dev-principles |
 | templates/ | 프로젝트에 넣는 핵심 규칙 블록(AGENTS.harness.md)과 CLAUDE.md 연결 파일 |
-| adapters/ | 도구별 보조 파일. claude는 훅 예시와 진행 표시 스크립트, cursor는 규칙(.mdc) |
+| adapters/ | 도구별 보조 파일. cursor는 규칙(.mdc) |
 
 ## 지원 도구
 
@@ -27,7 +27,7 @@
 사용자가 "readme.md를 읽고 하네스를 적용해줘."라고 요청하면, 에이전트는 아래 순서를 따른다. 저장소 루트(이 README가 있는 곳)를 BASE, 적용받는 프로젝트 루트를 PROJ로 쓴다.
 
 1. 자기 인식: 현재 도구가 지원 도구 표의 어떤 agent인지 확인한다. 표에 없는 도구에서는 공통 단계(3단계의 프로젝트 파일)만 적용하고 그 밖의 설정은 안내한다.
-2. 계획 보고: 아래 단계에서 적용할 대상 파일과 설정 파일 편집 여부를 사용자에게 보고하고 승인을 받는다. 설정 파일(settings.json, hooks, AGENTS.md 병합 포함)을 편집할 때는 원본을 백업한 뒤 병합하고, 병합할 내용을 사용자에게 보여 확인한다.
+2. 계획 보고: 아래 단계에서 적용할 대상 파일과 설정 파일 편집 여부를 사용자에게 보고하고 승인을 받는다. 설정 파일(settings.json, AGENTS.md 병합 포함)을 편집할 때는 원본을 백업한 뒤 병합하고, 병합할 내용을 사용자에게 보여 확인한다.
 3. 공통 파일 복사:
    - BASE/harness/HARNESS.md를 PROJ/harness/HARNESS.md에 복사한다.
    - BASE/skills/<스킬>를 PROJ/.agents/skills/<스킬>에 복사한다. Claude Code에서는 PROJ/.claude/skills/<스킬>에도 두도록 한다.
@@ -36,7 +36,6 @@
 4. 도구별 설정 (2단계에서 승인받은 것만 실행):
    - Cursor: PROJ/.cursor/rules/agent-harness.mdc를 adapters/cursor/agent-harness.mdc에서 복사한다. 전역 User Rules는 settings.json의 user_rules에 templates/AGENTS.harness.md의 핵심 규칙이 들어 있는지 확인하고 없으면 병합한다.
    - Codex CLI: PROJ/AGENTS.md에 핵심 규칙 블록이 있는지 확인하고 없으면 병합한다.
-   - Claude Code: adapters/claude/hooks.example.json을 참고해 ~/.claude/settings.json의 hooks에 병합한다(선택). bash_progress.py는 PROJ/harness/adapters/claude/에 복사한다.
    - Gemini CLI: settings.json의 context.fileName에 AGENTS.md가 포함되어 있는지 확인한다.
    - GitHub Copilot: PROJ/.github/copilot-instructions.md에 핵심 규칙을 병합하고, PROJ/.github/skills에 스킬을 복사한다.
    - Antigravity: PROJ/AGENTS.md와 PROJ/.agents/skills를 적용한다. 전역 규칙 경로는 공식 문서로 확인하지 못했으므로 사용자에게 직접 확인을 요청한다.

@@ -1,13 +1,13 @@
 # AGENTS.md
 
-이 문서는 agent-harness 저장소를 고치는 에이전트를 위한 규칙입니다. 이 저장소도 자기 하네스(harness/HARNESS.md)를 따릅니다.
+이 문서는 agent-harness 저장소를 고치는 에이전트를 위한 규칙입니다. 이 저장소도 자기 하네스(harness/HARNESS.md)를 따릅니다. 저장소 유지 규칙과 하네스 핵심 규칙은 이 파일에 함께 들어 있다.
 
 ## 정본 위치
 
 - 하네스 설계 기록: harness/HARNESS.md
 - 스킬: skills/<이름>/SKILL.md
 - 핵심 규칙 템플릿: templates/AGENTS.harness.md, templates/CLAUDE.md
-- 도구별 어댑터: adapters/claude, adapters/cursor
+- 도구별 어댑터: adapters/cursor
 - 작업 문서: docs/tasks/
 
 ## 바꿀 때 함께 맞출 곳
@@ -17,8 +17,7 @@ HARNESS.md, 스킬, 핵심 규칙을 바꾸면 아래도 같이 확인합니다.
 - README.md의 지원 도구 표
 - templates/AGENTS.harness.md
 - adapters/cursor/agent-harness.mdc (템플릿 본문과 같은 내용을 유지합니다.)
-- adapters/claude/hooks.example.json
-- 정본 규칙이 바뀌면 VERSION 파일의 버전을 올립니다.
+- 정본 규칙이 바뀌면 VERSION 파일의 버전을 커밋하는 시점에 올립니다.
 
 ## 스킬 형식
 
@@ -32,15 +31,17 @@ HARNESS.md, 스킬, 핵심 규칙을 바꾸면 아래도 같이 확인합니다.
 - 모든 문서는 한국어로 쓰고, 사용자 대상 문장은 존댓말로 씁니다.
 - 코드, 경로, 명령, 식별자는 원문 그대로 둡니다.
 - harness/, skills/, templates/, adapters/cursor/에는 특정 도구 전용 표현(Claude 고유 도구 이름, 개인 경로, 모델 이름)을 넣지 않습니다. 모델 이름 예시는 HARNESS.md 8절 표에만 둡니다.
+- HARNESS.md 1절과 한국어 규칙: 프로젝트가 한국어 문서를 요구하면 HARNESS.md 1절보다 이 절이 우선합니다.
+- 스킬 문서의 본문은 해체말로 쓰고, 서브가 사용자에게 띄우는 문장을 담는 절(브리프 출력 규칙)은 존댓말을 씁니다.
 
 ## 검증 방법
 
 변경 뒤 python -I로 아래를 확인합니다.
 
 - 스킬 frontmatter: name이 폴더명과 같고 정규식에 맞으며, description이 1~1024자이고, 다른 필드가 없습니다.
-- 금지 표현이 harness/, skills/, templates/, adapters/cursor/, adapters/claude/에 없습니다. 대상은 "C:\Users", "GLOBAL_HARNESS", "전역 하네스", "Agent 도구", "SendMessage"입니다. haiku, sonnet, opus는 HARNESS.md 8절 표에만 있어야 합니다.
+- 금지 표현이 harness/, skills/, templates/, adapters/cursor/에 없습니다. 대상은 "C:\Users", "GLOBAL_HARNESS", "전역 하네스", "Agent 도구", "SendMessage"입니다. haiku, sonnet, opus는 HARNESS.md 8절 표에만 있어야 합니다.
 - 스킬 줄 수가 80 이하(dev-principles 제외)이고 templates/AGENTS.harness.md가 40줄 이하입니다.
-- adapters/claude/hooks.example.json이 json.load로 읽힙니다.
+- 검증은 python -I -c 인라인으로만 실행하며, 임시 스크립트 파일(_verify*.py 등)을 만들지 않습니다.
 
 ## 승인·안전 규칙
 
@@ -48,3 +49,34 @@ HARNESS.md, 스킬, 핵심 규칙을 바꾸면 아래도 같이 확인합니다.
 - 비밀 값과 .env는 넣지 않습니다.
 - 리뷰 없이 PASS 처리하지 않습니다.
 - 자세한 규칙은 harness/HARNESS.md 5절을 따릅니다.
+
+<!-- agent-harness:begin -->
+## 기획·개발 하네스 핵심 규칙
+
+- 하네스 문서: harness/HARNESS.md (모델 단계는 8절을 따릅니다.)
+- 스킬: plan-harness, build-harness, review-harness, delegation-brief, proofread-harness, dev-principles
+
+### 언어와 우선순위 (HARNESS.md 1절)
+
+- 응답 언어는 사용자가 쓰는 언어를 따릅니다. 사용자 대상 문장, 서브에이전트 지시와 보고, 문서, 코드 주석, 커밋 메시지에 같은 원칙을 적용하고 정중한 존댓말을 씁니다.
+- 코드, 경로, 명령, 식별자, 인용은 원문 그대로 둡니다.
+- 프로젝트 규칙이 있으면 우선합니다. 단, 아래 승인·안전 규칙은 이 하네스가 우선합니다.
+
+### 위임 원칙 (HARNESS.md 3절)
+
+- 위임 범위: 파일 읽기·검색·수정·쓰기·상태 갱신·작업 문서 기록·리뷰 실행은 서브에이전트나 리뷰 세션이 맡습니다. 짧은 명령 한 줄 실행(git status·log·diff, 커밋, 푸시, python -c 인라인 검증)는 허락을 받아 메인이 직접 실행합니다. 커밋·푸시는 사용자 허락이 필요합니다. 메인은 승인 대화, 작업 문서 내용 결정, 지시 작성, 결과 확인, 사용자 보고만 합니다. 단, 메인은 판단 규칙 확인을 위해 이 하네스의 기록 문서와 스킬 파일(SKILL.md)은 직접 읽을 수 있습니다. 파일 읽기·검색 잡음이 부모에 남는 것을 피하는 것이 서브 위임의 목적입니다.
+- 서브에이전트를 띄울 때마다 가벼운/표준/가장 강한 모델 중 단계를 지정합니다. 사용자에게 묻지 않고 난이도로 고릅니다.
+- 서브에이전트의 보고를 믿지 않고 확인 전용 서브에이전트가 결과를 직접 확인합니다. 리뷰는 구현 맥락이 없는 새 세션이 읽기 전용으로 합니다.
+- 서브에이전트가 없는 도구에서는 메인이 같은 절차를 단계별로 직접 진행하고, 단계마다 작업 문서를 갱신하며, 리뷰는 새 대화에서 합니다.
+- 진행 표시: 오래 걸리는 명령은 단계마다 echo로 표시를 남기고, 테스트는 진행률이 남는 옵션을 쓰며, 로그 파일 경로를 알립니다.
+- 서브에이전트를 열 때 하네스는 자동 주입되지 않는다. 작업에 필수 요소(체크리스트, 판정 기준, AC, 산출물 형식, 하네스 문서 경로)를 프롬프트에 직접 담고, 리뷰는 delegation-brief의 리뷰 위임 프롬프트 템플릿을 쓴다.
+
+### 승인·안전 규칙 (HARNESS.md 5절)
+
+1. 기획 승인 전에는 코드를 쓰지 않습니다.
+2. 구현 중에는 멈추지 않습니다. 새 권한, 비가역 작업, 보안, 제품 결과 변경, 같은 지적으로 보정 2회 후에도 미달일 때만 멈춥니다.
+3. 커밋, 푸시, 병합은 사용자가 허락해야 합니다.
+4. 비밀 값과 .env는 커밋하지 않습니다.
+5. 리뷰 없이 PASS 처리하지 않습니다. 판정은 리뷰 세션이 합니다.
+6. 요청받지 않은 코드를 생성하지 않습니다. 지시되지 않은 파일은 만들지 않고, 검증은 인라인(-c)으로 실행하며, 문서의 코드 샘플은 요청한 때만 담습니다.
+<!-- agent-harness:end -->
