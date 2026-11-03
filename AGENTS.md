@@ -1,46 +1,48 @@
 # AGENTS.md
 
-이 문서는 agent-harness 저장소를 고치는 에이전트를 위한 규칙입니다. 이 저장소도 자기 하네스(harness/HARNESS.md)를 따릅니다. 저장소 유지 규칙과 하네스 핵심 규칙은 이 파일에 함께 들어 있다.
+이 문서는 agent-harness 저장소를 고치는 에이전트를 위한 규칙입니다. 이 저장소도 자기 하네스(harness/HARNESS.md)를 따릅니다. 핵심 규칙 블록은 이 파일 맨 아래에 있습니다.
 
 ## 정본 위치
 
 - 하네스 설계 기록: harness/HARNESS.md
 - 스킬: skills/<이름>/SKILL.md
 - 핵심 규칙 템플릿: templates/AGENTS.harness.md, templates/CLAUDE.md
-- 도구별 어댑터: adapters/cursor
-- 작업 문서: docs/tasks/
+- Cursor 어댑터: adapters/cursor/agent-harness.mdc, adapters/cursor/tool-call.mdc
+- 줄바꿈 표준: .gitattributes (LF)
+- 작업 문서: docs/tasks/ (기획용 작업 문서 하나로 단일화, 별도 brief 파일 금지)
+- 문서 색인: docs/INDEX.md
 
 ## 바꿀 때 함께 맞출 곳
 
-HARNESS.md, 스킬, 핵심 규칙을 바꾸면 아래도 같이 확인합니다.
-
-- README.md의 지원 도구 표
-- templates/AGENTS.harness.md
-- adapters/cursor/agent-harness.mdc (템플릿 본문과 같은 내용을 유지합니다.)
-- 정본 규칙이 바뀌면 VERSION 파일의 버전을 커밋하는 시점에 올립니다.
+- skills/ → .agents/skills/, .claude/skills/ (3벌 바이트 동일)
+- templates/AGENTS.harness.md ↔ 이 파일의 마커 블록 (바이트 동일)
+- adapters/cursor/*.mdc ↔ .cursor/rules/*.mdc (바이트 동일)
+- README.md의 지원 도구 표, harness/HARNESS.md 2절
+- 정본 규칙이 바뀌면 VERSION을 커밋하는 시점에 올립니다.
 
 ## 스킬 형식
 
 - Agent Skills 표준을 따릅니다. frontmatter에는 name과 description만 둡니다.
-- name은 폴더명과 같고 소문자, 숫자, 하이픈만 씁니다. 정규식은 `^[a-z0-9]+(-[a-z0-9]+)*$`입니다.
+- name은 폴더명과 같고 `^[a-z0-9]+(-[a-z0-9]+)*$`에 맞습니다.
 - description은 1024자 이하입니다.
-- 스킬 파일은 80줄 이하로 둡니다. dev-principles만 예외입니다.
+- 스킬 파일은 80줄 이하, 3,500자 이하입니다. dev-principles만 예외입니다.
 
 ## 언어 규칙
 
-- 응답·문서·주석·커밋 메시지는 사용자가 쓰는 언어로 쓰고, 존중하는 공손 어투(존댓말)를 유지합니다. 설명·주석·보고에는 eli5-clarity(결론 먼저, 짧게, 용어 첫 등장 풀이, 사람 기준)를 항상 적용합니다. 정본: .agents/skills/eli5-clarity/SKILL.md 또는 .claude/skills/eli5-clarity/SKILL.md. 상세는 harness/HARNESS.md 1절입니다.
+- 응답·문서·주석·커밋 메시지는 사용자 언어로 쓰고 존댓말을 유지합니다. eli5-clarity를 항상 적용합니다. 상세는 harness/HARNESS.md 1절입니다.
 - 코드, 경로, 명령, 식별자는 원문 그대로 둡니다.
-- harness/, skills/, templates/, adapters/cursor/에는 특정 도구 전용 표현(Claude 고유 도구 이름, 개인 경로, 모델 이름)을 넣지 않습니다. 모델 이름 예시는 HARNESS.md 8절 표에만 둡니다.
-- 스킬 문서의 지시문은 간결한 서술체로 쓰고, 서브가 사용자에게 띄우는 문장(브리프 출력 규칙 등)은 공손 존댓말과 eli5-clarity(결론 먼저·짧게·용어 풀이)로 씁니다. 정본은 skills/eli5-clarity/SKILL.md.
+- harness/, skills/, templates/, adapters/cursor/에는 특정 도구 전용 표현(개인 경로, 모델 이름)을 넣지 않습니다. 모델 이름 예시는 HARNESS.md 8절 표에만 둡니다.
+- 스킬 지시문은 간결한 서술체로, 사용자에게 띄우는 문장은 존댓말과 eli5-clarity로 씁니다.
 
 ## 검증 방법
 
-변경 뒤 python -I로 아래를 확인합니다.
+변경 뒤 `python -I -c` 인라인으로만 확인합니다. 임시 스크립트 파일(_verify*.py 등)은 만들지 않습니다.
 
-- 스킬 frontmatter: name이 폴더명과 같고 정규식에 맞으며, description이 1~1024자이고, 다른 필드가 없습니다.
-- 금지 표현이 harness/, skills/, templates/, adapters/cursor/에 없습니다. 대상은 "C:\Users", "GLOBAL_HARNESS", "전역 하네스", "Agent 도구", "SendMessage"입니다. haiku, sonnet, opus는 HARNESS.md 8절 표에만 있어야 합니다.
-- 스킬 줄 수가 80 이하(dev-principles 제외)이고 templates/AGENTS.harness.md가 40줄 이하입니다.
-- 검증은 python -I -c 인라인으로만 실행하며, 임시 스크립트 파일(_verify*.py 등)을 만들지 않습니다.
+1. 스킬 frontmatter: name이 폴더명과 같고 정규식에 맞으며, description이 1~1024자이고, 다른 필드가 없습니다.
+2. 금지 표현이 harness/, skills/, templates/, adapters/cursor/, docs/에 0건입니다. 이 파일도 검사 대상이라 두 조각으로 적습니다. 이어 붙이면 금지어입니다: `C:`+`\Users`, `GLOBAL_`+`HARNESS`, `전역 `+`하네스`, `Agent `+`도구`, `Send`+`Message`. 모델 이름 3종(`hai`+`ku`, `son`+`net`, `op`+`us`)은 HARNESS.md 8절 표에만 둡니다.
+3. 스킬 줄 수 80 이하·글자 수 3,500 이하(dev-principles 제외), templates/AGENTS.harness.md 40줄 이하, 어댑터 .mdc 글자 수 상한(agent-harness 600, tool-call 700), 상시 로드(AGENTS.md+.cursor/rules/*.mdc 글자 합) 5,089자 이하를 지킵니다.
+4. 해시 일치: 스킬 3벌, 템플릿 ↔ 이 파일 마커 블록, 어댑터 ↔ .cursor/rules 사본.
+5. 깨진 문자(U+FFFD)와 허용 외 한자·일본어가 0건입니다.
 
 ## 승인·안전 규칙
 
@@ -52,33 +54,35 @@ HARNESS.md, 스킬, 핵심 규칙을 바꾸면 아래도 같이 확인합니다.
 <!-- agent-harness:begin -->
 ## 기획·개발 하네스 핵심 규칙
 
-- 하네스 문서: harness/HARNESS.md (모델 단계는 8절을 따릅니다.)
-- 스킬: plan-harness, build-harness, review-harness, delegation-brief, proofread-harness, eli5-clarity, dev-principles
+정본은 harness/HARNESS.md입니다. 스킬: plan-harness, build-harness, review-harness, delegation-brief, proofread-harness, eli5-clarity, dev-principles
 
-### 언어와 우선순위 (HARNESS.md 1절)
+### 공통 규칙 (메인·서브·리뷰 전원 필수, HARNESS.md 1절)
+- 사용자 언어·존댓말·eli5-clarity(결론 먼저, 짧게, 용어 첫 등장 풀이)를 응답·서브 지시와 보고·문서·코드 주석과 독스트링·커밋 메시지에 씁니다.
+- 한자·외국어 서술과 깨진 글자(U+FFFD)를 쓰지 않습니다.
+- 코드·경로·명령·식별자·인용은 원문 그대로 둡니다.
+- 마커 블록과 harness/HARNESS.md는 읽기 전용이라 고치지 않습니다.
+- 프로젝트 규칙은 마커 바깥 `## 프로젝트 오버레이`(또는 docs/PROJECT_RULES.md)에 둡니다.
+- 더 엄격한 오버레이가 우선하고, 완화는 `[안전 예외 승인: N번]`을 명시한 때만 허용합니다.
+- harness/VERSION과 .gitattributes(`eol=lf`)를 함께 둡니다.
 
-- 응답 언어는 사용자가 쓰는 언어를 따릅니다. 사용자 대상 문장, 서브에이전트 지시와 보고, 문서, 코드 주석, 커밋 메시지에 같은 원칙을 적용하고 존중하는 공손 어투(존댓말)를 씁니다. 설명·주석·보고는 eli5-clarity(결론 먼저, 짧게, 용어 첫 등장 풀이, 사람 기준)를 항상 적용합니다. 정본: .claude/skills/eli5-clarity/SKILL.md 또는 .agents/skills/eli5-clarity/SKILL.md.
-- 코드, 경로, 명령, 식별자, 인용은 원문 그대로 둡니다.
-- 프로젝트 규칙이 있으면 우선합니다. 단, 아래 승인·안전 규칙은 이 하네스가 우선합니다.
+### 부모(메인) 세션 규칙 (HARNESS.md 3절)
+- 메인은 기획 수렴·승인 요청·작업 문서 결정·위임 지시·최종 보고만 합니다.
+- 허락 후 메인이 한 줄 명령(git status·log·diff, 커밋, 푸시, python -I -c)을 실행합니다.
+- 표준은 구현 서브 → 독립 리뷰 서브 2단계입니다.
+- Fast-track(단일 파일·20줄 이하 단순 수정 또는 하네스 설치·업데이트 동기화, 보안·비가역 제외)은 서브 없이 메인이 직접 처리하고 인라인 검증·셀프 체크로 PASS합니다.
+- 서브 호출 전 도구 schema를 읽고, 난이도로 모델 3단계를 고릅니다.
+- 긴 출력은 로그 파일+한 줄 요약, 보고는 결과1줄/불릿≤5/경로/다음1줄입니다.
 
-### 위임 원칙 (HARNESS.md 3절)
+### 자식(구현·리뷰 서브) 세션 규칙 (HARNESS.md 3·6·7절)
+- 프롬프트는 [앞: 가드레일 6줄] → [작업 문서 경로·작업 번호] → [끝: 자기점검 4줄], 500자 이하입니다. 문서 본문은 다시 적지 않습니다.
+- 구현·보정 서브는 지정 문서·파일만 읽고 바로 고치며, dev-principles 2~10절과 주석 eli5-clarity를 지키고 -c 검증·DRY·보안 자기확인을 보고합니다.
+- 리뷰 서브는 구현 맥락 없는 읽기 전용 세션에서 검증 재실행·산출물 확인·7대 체크리스트(주석 eli5-clarity·언어 순수성 포함)·DRY 확인 후 판정합니다.
 
-- 위임 범위: 파일 읽기·검색·수정·쓰기·상태 갱신·작업 문서 기록·리뷰는 서브/리뷰 세션이 맡습니다. 짧은 명령 한 줄(git status·log·diff, 커밋, 푸시, python -c)은 허락 후 메인이 실행합니다. 메인은 승인·문서 결정·지시·확인·보고만 하며, 하네스 기록·SKILL.md는 직접 읽을 수 있습니다.
-- 서브에이전트를 열기 전에 호출 도구의 schema를 읽어 도구 이름, 매개변수, 서브에이전트 종류 지정 방법, 모델 지정 방법을 확인하고 schema대로 호출합니다. 추측으로 호출하지 않고, 호출 실패 시 schema를 다시 읽어 호출 구조를 고칩니다.
-- 서브에이전트를 띄울 때마다 가벼운/표준/가장 강한 모델 중 단계를 지정합니다. 사용자에게 묻지 않고 난이도로 고릅니다.
-- 서브에이전트의 보고를 믿지 않고 확인 전용 서브에이전트가 결과를 직접 확인합니다. 리뷰는 구현 맥락이 없는 새 세션이 읽기 전용으로 합니다.
-- 서브에이전트가 없는 도구에서는 메인이 같은 절차를 단계별로 직접 진행하고, 단계마다 작업 문서를 갱신하며, 리뷰는 새 대화에서 합니다.
-- 진행 표시: 긴 출력은 로그 파일+경로·한 줄 요약. 반복 실험은 한 로그로. 폴링 남발 금지. 중간 사용자 보고는 게이트 대화(승인·질문·멈춤·완료) 중심.
-- 보고 상한·핸드오프: 결과1줄/불릿≤5/경로/다음1줄. 서브 장문을 채팅에 재붙이지 않음. 정본은 delegation-brief·HARNESS 3절.
-- 서브에이전트를 열 때 하네스는 자동으로 주입되지 않습니다. 작업에 필수 요소(체크리스트, 판정 기준, AC(인수 조건), 산출물 형식, 하네스 문서 경로)를 프롬프트에 직접 담고, 리뷰는 delegation-brief의 리뷰 위임 프롬프트 템플릿을 씁니다.
-- 구현·보정 위임을 열 때는 하네스 핵심 규칙 사본(원문 유지, 프로젝트 규칙 우선, 승인·안전 6개, 검증 인라인(-c), 개발 원칙 적용 항목, 함수 중복(DRY) 확인)과 dev-principles·프로젝트 개발 규칙 경로를 프롬프트에 직접 담습니다. 사본 문안은 delegation-brief의 '하네스 주입 사본' 절을 따릅니다.
-
-### 승인·안전 규칙 (HARNESS.md 5절)
-
-1. 기획 승인 전에는 코드를 쓰지 않습니다.
-2. 구현 중에는 멈추지 않습니다. 새 권한, 비가역 작업, 보안, 제품 결과 변경, 같은 지적으로 보정 2회 후에도 미달일 때만 멈춥니다.
-3. 커밋, 푸시, 병합은 사용자가 허락해야 합니다.
-4. 비밀 값과 .env는 커밋하지 않습니다.
-5. 리뷰 없이 PASS 처리하지 않습니다. 판정은 리뷰 세션이 합니다.
-6. 요청받지 않은 코드를 생성하지 않습니다. 지시되지 않은 파일은 만들지 않고, 검증은 인라인(-c)으로 실행하며, 문서의 코드 샘플은 요청한 때만 담습니다.
+### 승인·안전 6원칙 (전원 필수, HARNESS.md 5절)
+1. 기획 승인 전 코드를 쓰지 않습니다.
+2. 구현 중 멈춤은 새 권한·비가역·보안·제품 결과 변경·동일 지적 보정 2회 후 미달뿐입니다.
+3. 커밋·푸시·병합은 사용자 허락이 필요합니다(오버레이 명시 예외 제외).
+4. 비밀 값·.env를 커밋·로그에 남기지 않습니다.
+5. 리뷰 없이 PASS하지 않습니다. 표준은 독립 리뷰 세션, Fast-track은 메인 셀프 체크가 판정합니다.
+6. 요청받지 않은 코드·미지시 파일·임시 검증 스크립트(_verify*.py)를 만들지 않습니다. 검증은 -c 인라인만 씁니다.
 <!-- agent-harness:end -->
