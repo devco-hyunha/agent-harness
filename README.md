@@ -7,7 +7,7 @@
 | 폴더 | 설명 |
 |---|---|
 | harness/ | 하네스 설계 기록(HARNESS.md). 정본입니다. |
-| skills/ | Agent Skills 표준 스킬 6개: plan-harness, build-harness, review-harness, delegation-brief, proofread-harness, dev-principles |
+| skills/ | Agent Skills 표준 스킬 7개: plan-harness, build-harness, review-harness, delegation-brief, proofread-harness, eli5-clarity, dev-principles |
 | templates/ | 프로젝트에 넣는 핵심 규칙 블록(AGENTS.harness.md)과 CLAUDE.md 연결 파일 |
 | adapters/ | 도구별 보조 파일. cursor는 규칙(.mdc) |
 
