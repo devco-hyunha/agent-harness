@@ -42,6 +42,7 @@
 | 14 | 대화·컨텍스트 효율 | 14-conversation-context-efficiency.md | - | done |
 | 15 | eli5-clarity 스킬 정본 | 15-eli5-clarity-skill.md | - | done |
 | 16 | 하네스 전체 점검·리밸런싱 | 16-harness-rebalancing.md | 16-harness-rebalancing.brief-01.md, brief-02.md, brief-03.md | done |
+| 17 | 서브에이전트 개발 하네스 전달 강제 | 17-subagent-harness-delivery.md | - | done |
 
 ## 16번 작업 단위
 - 작업 1: 정본·템플릿·어댑터·README 개편 (brief-01, 단일 작업 문서 체제로 통합됨)
@@ -49,3 +50,6 @@
 - 작업 3: docs/tasks 정리와 이 색인 신설 (brief-03, 단일 작업 문서 체제로 통합됨)
 - 작업 4: 통합 인라인 검증과 전체 리뷰
 - 작업 5: 추가 요구 반영 (공통·부모·자식 역할 구분, 단일 작업 문서와 포인터 샌드위치, 코드 주석 eli5-clarity, 조건부 리서치)
+
+## 17번 작업 단위
+- 작업 1: 부모 세션 하네스 주입 의무화, dev-principles 전 항목(2~11절 전체) 전달 통일, 파일 삭제 시 대상·이유·근거 설명 강제
