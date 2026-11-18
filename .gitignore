@@ -2,5 +2,11 @@
 __pycache__/
 .DS_Store
 
-# 로컬 작업 기록. 공개 대상이 아니다.
-docs/tasks/
+# 로컬 작업 기록. 원격에는 빈 폴더(.gitkeep)만.
+docs/INDEX.md
+docs/tasks/*
+!docs/tasks/.gitkeep
+docs/research/*
+!docs/research/.gitkeep
+docs/reviews/*
+!docs/reviews/.gitkeep

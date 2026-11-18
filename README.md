@@ -7,9 +7,10 @@
 | 폴더·파일 | 설명 |
 |---|---|
 | harness/ | 하네스 설계 기록(HARNESS.md). 정본입니다. |
-| skills/ | Agent Skills 표준 스킬 7개: plan-harness, build-harness, review-harness, delegation-brief, proofread-harness, eli5-clarity, dev-principles |
+| skills/ | Agent Skills 표준 스킬 8개: plan-harness, build-harness, review-harness, delegation-brief, proofread-harness, eli5-clarity, dev-principles, project-plan-harness |
 | templates/ | 프로젝트에 넣는 핵심 규칙 블록(AGENTS.harness.md)과 CLAUDE.md 연결 파일 |
 | adapters/ | 도구별 보조 파일. cursor는 규칙(.mdc) 2개: agent-harness.mdc(AGENTS.md 브리지), tool-call.mdc(도구 호출 보정) |
+| docs/ | 로컬 작업 색인(원격 미포함)·docs는 빈 골격(.gitkeep만). |
 | VERSION | 하네스 버전. 적용받는 프로젝트에는 harness/VERSION으로 복사합니다. |
 | .gitattributes | `* text=auto eol=lf`. 줄바꿈 차이로 생기는 가짜 변경을 막습니다. |
 
@@ -21,8 +22,8 @@
 |---|---|---|---|
 | Claude Code | CLAUDE.md(@AGENTS.md 연결) | .claude/skills | 서브에이전트를 열 수 있고 모델 단계를 지정합니다. |
 | Cursor | AGENTS.md, .cursor/rules/*.mdc(어댑터) | .agents/skills(.claude/skills도 읽음) | 서브에이전트를 열 수 있고 모델을 지정합니다. |
-| Codex | AGENTS.md | .agents/skills | 도구가 지원하는 방식을 따릅니다. 없으면 메인이 단계별로 진행하고 리뷰는 새 대화에서 합니다. |
-| OpenCode | AGENTS.md(있으면 CLAUDE.md는 읽지 않음) | .agents/skills만 복사 권장 | 위와 같습니다. |
+| Codex | AGENTS.md | .agents/skills | 도구가 지원하는 방식을 쓰며, 없으면 아래 "서브에이전트가 없는 도구" 절차를 따른다. |
+| OpenCode | AGENTS.md(있으면 CLAUDE.md는 읽지 않음) | .agents/skills (.claude/skills도 탐색하므로 중복 방지를 위해 .agents/skills만 복사한다) | 도구가 지원하는 방식을 쓰며, 없으면 아래 절차를 따른다. |
 
 - OpenCode는 .agents/skills와 .claude/skills를 모두 탐색합니다. 이름 충돌 경고를 피하려면 .agents/skills에만 복사합니다.
 - 서브에이전트 지원과 모델 지정은 도구와 버전마다 다릅니다. 호출 전에 도구 schema로 확인합니다.
@@ -32,7 +33,7 @@
 | 도구 | 규칙 파일 | 스킬 위치 |
 |---|---|---|
 | Gemini CLI | GEMINI.md, AGENTS.md는 settings.json context.fileName 설정 필요 | .agents/skills |
-| Antigravity | 프로젝트 AGENTS.md | .agents/skills |
+| Antigravity | 프로젝트 AGENTS.md(전역 규칙 경로는 미확인·제시 금지) | .agents/skills |
 | GitHub Copilot | 프로젝트 AGENTS.md, .github/copilot-instructions.md | .agents/skills, .github/skills |
 
 ## 베이스 + 프로젝트 오버레이
@@ -57,14 +58,14 @@
    - PROJ의 AGENTS.md에 templates/AGENTS.harness.md의 블록(agent-harness:begin~end)을 병합한다. AGENTS.md가 없으면 블록만으로 AGENTS.md를 만든다.
    - Claude Code에서는 templates/CLAUDE.md 내용(@AGENTS.md)으로 PROJ/CLAUDE.md를 만든다.
 4. 도구별 설정 (2단계에서 승인받은 것만 실행):
-   - Cursor: PROJ/.cursor/rules/에 adapters/cursor/agent-harness.mdc와 adapters/cursor/tool-call.mdc를 복사한다. 전역 User Rules는 settings.json의 user_rules에 templates/AGENTS.harness.md의 핵심 규칙이 들어 있는지 확인하고 없으면 병합한다.
+   - Cursor: PROJ/.cursor/rules/에 adapters/cursor/agent-harness.mdc와 adapters/cursor/tool-call.mdc(AGENTS.md 브리지)를 복사한다. 핵심 규칙은 PROJ/AGENTS.md 마커 블록으로 두고, 전역 user_rules에 블록 전체를 넣지 않는다.
    - Codex·OpenCode: PROJ/AGENTS.md에 핵심 규칙 블록이 있는지 확인하고 없으면 병합한다.
    - Gemini CLI: settings.json의 context.fileName에 AGENTS.md가 포함되어 있는지 확인한다.
    - GitHub Copilot: PROJ/.github/copilot-instructions.md에 핵심 규칙을 병합하고, PROJ/.github/skills에 스킬을 복사한다.
-   - Antigravity: PROJ/AGENTS.md와 PROJ/.agents/skills를 적용한다. 전역 규칙 경로는 공식 문서로 확인하지 못했으므로 사용자에게 직접 확인을 요청한다.
+   - Antigravity: PROJ/AGENTS.md와 PROJ/.agents/skills만 적용한다. 전역 규칙 경로는 미확인이므로 제시하지 않는다.
 5. 검증과 보고: PROJ에 복사·병합된 파일이 실제로 존재하는지 확인하고, AGENTS.md 블록이 한 번만 들어 있는지 확인한다. 사용자에게 적용한 위치를 목록으로 보고한다.
 
-한계: Antigravity 전역 규칙 경로(~/.gemini/config/skills)와 Copilot CLI 경로는 공식 문서로 확인하지 못해 안내만 한다.
+한계: Antigravity 전역 규칙 경로와 Copilot CLI 경로는 공식 문서로 확인하지 못해 안내에서 제외한다.
 
 ## 업데이트 (보존 방식)
 
@@ -78,4 +79,8 @@
 
 ## 수동 설치
 
-AI 자동 적용이 막힐 때 쓰는 폴백이다. GitHub에서 저장소를 내려받아 필요한 파일을 PROJ의 harness/, .agents/skills(도구별 스킬 위치), harness/VERSION에 복사한다. 업데이트는 위 "업데이트 (보존 방식)"을 따르고, 제거는 복사한 파일을 직접 지운다.
+AI 자동 적용이 막힐 때 쓰는 폴백이다. GitHub에서 저장소를 내려받아 필요한 파일을 PROJ의 harness/, .agents/skills(도구별 스킬 위치), harness/VERSION에 복사한다. 업데이트는 위 "업데이트 (보존 방식)"을 따르고, 제거는 복사한 파일을 직접 지운다. 설치·갱신 뒤 스킬 폴더가 도구별 경로(.agents/skills, Claude Code만 .claude/skills도)에 복사됐는지, adapters/cursor ↔ .cursor/rules 해시가 같은지 확인한다.
+
+## 변경 이력
+
+- 0.10.0: 23·24(오버레이 전달), docs 원격 빈 폴더, HARNESS 변경 이력을 이곳으로 이전.
