@@ -7,9 +7,9 @@
 | 폴더·파일 | 설명 |
 |---|---|
 | harness/ | 하네스 설계 기록(HARNESS.md). 정본입니다. |
-| skills/ | Agent Skills 표준 스킬 8개: plan-harness, build-harness, review-harness, delegation-brief, proofread-harness, eli5-clarity, dev-principles, project-plan-harness |
-| templates/ | 프로젝트에 넣는 핵심 규칙 블록(AGENTS.harness.md)과 CLAUDE.md 연결 파일 |
-| adapters/ | 도구별 보조 파일. cursor는 규칙(.mdc) 2개: agent-harness.mdc(AGENTS.md 브리지), tool-call.mdc(도구 호출 보정) |
+| skills/ | Agent Skills 표준 스킬 9개(harness-router 포함) + harness-router/playbooks·dev-principles/leaves(자동 스킬 아님). 그 외: plan-harness, build-harness, review-harness, delegation-brief, proofread-harness, eli5-clarity, dev-principles(색인), project-plan-harness |
+| templates/ | always-on 최소 핵심 블록(AGENTS.harness.md: 언어·6원칙·라우터·동시 서브 금지)과 CLAUDE.md 연결 파일. 절차 장문은 플레이북 |
+| adapters/ | 도구별 보조 파일. cursor는 규칙(.mdc) 2개: agent-harness.mdc(AGENTS.md 핵 브리지), tool-call.mdc(도구 호출 보정) |
 | docs/ | 로컬 작업 색인(원격 미포함)·docs는 빈 골격(.gitkeep만). |
 | VERSION | 하네스 버전. 적용받는 프로젝트에는 harness/VERSION으로 복사합니다. |
 | .gitattributes | `* text=auto eol=lf`. 줄바꿈 차이로 생기는 가짜 변경을 막습니다. |
@@ -35,6 +35,14 @@
 | Gemini CLI | GEMINI.md, AGENTS.md는 settings.json context.fileName 설정 필요 | .agents/skills |
 | Antigravity | 프로젝트 AGENTS.md(전역 규칙 경로는 미확인·제시 금지) | .agents/skills |
 | GitHub Copilot | 프로젝트 AGENTS.md, .github/copilot-instructions.md | .agents/skills, .github/skills |
+
+## 라우터·플레이북·동시 서브
+
+결론: 채팅이 오면 harness-router가 플레이북 하나만 고르고 그 경로만 읽습니다. 큰 규칙 뭉치를 먼저 읽지 않습니다.
+
+- 자동 부착 스킬: harness-router 1개 + 기존 대스킬. playbooks·leaves는 자동 스킬이 아닙니다(경로 Read).
+- always-on 핵: 언어·존댓말·eli5 포인터, 승인·안전 6원칙, 라우터 한 줄, 동시 둘 이상 서브 금지·순차 허용. 절차 장문은 플레이북·harness/HARNESS.md입니다.
+- 동시 서브: 동시에 둘 이상 서브에이전트를 열지 않습니다. 구현 뒤 리뷰를 여는 순차는 허용합니다. 오버레이가 더 엄격하면 오버레이가 우선합니다.
 
 ## 베이스 + 프로젝트 오버레이
 
@@ -83,4 +91,5 @@ AI 자동 적용이 막힐 때 쓰는 폴백이다. GitHub에서 저장소를 �
 
 ## 변경 이력
 
+- 0.11.0: harness-router·플레이북·원칙 잎, 자기점검 하네스 칸·한곳=폴더·연속 N→N+1, 코드 주석 쉬운 명사형 한 줄, 판단 정본은 메인에서 확인(잡음만 서브).
 - 0.10.0: 23·24(오버레이 전달), docs 원격 빈 폴더, HARNESS 변경 이력을 이곳으로 이전.
