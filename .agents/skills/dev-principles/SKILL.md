@@ -28,12 +28,14 @@ description: 코드를 작성, 수정, 리뷰, 설계할 때 적용하는 보편
 | 9 | testing.md |
 | 10 | comments.md |
 | 11 | workflow.md |
+| 12 | commit.md |
 
 ## 호출 표
 
 | 플레이북 | 지정 잎 |
 |---|---|
 | build · review | solid · dry · kiss-yagni · separation · naming · errors · security · testing · comments · workflow |
+| 커밋(메인) | commit |
 | fast-track | dry · kiss-yagni · comments · workflow |
 | docs | comments · workflow |
 | plan · research · install-sync | 없음 |
